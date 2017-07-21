@@ -1,0 +1,112 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <style type="text/css">
+    	*{margin:0;padding:0}
+    	.cf::before,
+        .cf::after{
+		    content:"";
+		    display:block;
+		    clear:both;
+		}
+		#main{position:relative;}
+		.box{padding:15px 0 0 15px;float: left;}
+		.pic{padding:10px;border:1px solid #ccc;border-radius:5px;box-shadow:0 0 5px #ccc;}
+		.pic img{width: 160px;height:auto;}
+    </style>
+</head>
+<body>
+	<div id="main" class="cf">
+		<!-- 自动加载内容 -->
+	</div>	
+	<script type="text/javascript" src="jquery-1.8.3.min.js"></script>
+	<script type="text/javascript">
+	        $(function(){
+	              User.loadImg();  
+	        });
+		    $(window).load(function(){  
+			      ;(function(){
+			         User.init();				
+			      })();
+		    });
+		    var User = {
+	              init:function(){
+	              	    var _this = this;
+	                    _this.waterfall('main','box');
+						window.onscroll = function(){
+							if(_this.checkScroll){
+								_this.loadImg();
+							    _this.waterfall('main','box');
+							}
+				        }		    
+	              },
+	              waterfall:function(parent,box){
+	              	    var _this = this;
+		                var oParent = document.getElementById(parent);
+					        var oBoxs = _this.getByClass(oParent,box);
+					        var oBoxW = oBoxs[0].offsetWidth;
+					        var cols = Math.floor(document.documentElement.clientWidth/oBoxW);
+					        oParent.style.cssText = 'width:'+oBoxW*cols+'px;margin:0 auto';
+					        var hArr = [];
+					        for(var i=0;i<oBoxs.length;i++){  //执行waterfall就会执行此循环，从第二行连续
+					        	if(i<cols){
+					        		hArr.push(oBoxs[i].offsetHeight);
+					        	}else{
+					        		var minH = Math.min.apply(null,hArr); //求出最小值
+					        		var index = _this.getMinhIndex(hArr,minH);
+					        		oBoxs[i].style.position = 'absolute';
+					        		oBoxs[i].style.top = minH+'px';
+					        		// oBoxs[i].style.left = oBoxW*index+'px';
+					        		oBoxs[i].style.left = oBoxs[index].offsetLeft+'px';
+					        		hArr[index]+=oBoxs[i].offsetHeight; 
+					        	}
+				        };
+	              },
+	              getByClass:function(parent,cName){
+	              	    var boxArr = new Array(),
+				            oElement = parent.getElementsByTagName('*');
+				        for(var i=0;i<oElement.length;i++){
+				        	if(oElement[i].className == cName){
+				        		boxArr.push(oElement[i]);
+				        	}
+				        }
+				        return boxArr;
+	              },
+	              getMinhIndex:function(arr,val){
+	              	    for(var i in arr){
+				    		if(arr[i] == val){
+				    			return i;
+				    		}
+				    	}
+	              },
+	              checkScroll:function(){
+	              	    var _this = this;
+	              	    var oParent = document.getElementById('main');
+				    	var oBoxs = _this.getByClass(oParent,'box');
+				    	var lastBoxT = oBoxs[oBoxs.length-1].offsetTop + Math.floor(oBoxs[oBoxs.length-1].offsetHeight/2);
+				    	var scrollTop = document.body.scrollTop || document.documentElement.scrollTop
+				    	var cliHeight = document.body.clientHeight || document.documentElement.clientHeight;
+				    	return (lastBoxT<scrollTop+cliHeight)?true:false;
+	              },
+	              loadImg:function(){
+	              	    var datainit = {'data':[{'src':'3.jpg'},{'src':'2.jpg'},{'src':'1.jpg'},{'src':'5.jpg'},{'src':'4.jpg'},{'src':'3.jpg'},{'src':'2.jpg'},{'src':'1.jpg'},{'src':'5.jpg'},{'src':'4.jpg'},{'src':'3.jpg'},{'src':'2.jpg'},{'src':'1.jpg'},{'src':'5.jpg'},{'src':'4.jpg'},{'src':'3.jpg'},{'src':'2.jpg'},{'src':'1.jpg'},{'src':'5.jpg'},{'src':'4.jpg'},{'src':'3.jpg'},{'src':'2.jpg'},{'src':'1.jpg'},{'src':'5.jpg'},{'src':'4.jpg'},]}
+						    var oParent = document.getElementById('main');
+						    for(var i=0;i<datainit.data.length;i++){
+								var oImg = document.createElement('img');
+								oImg.src='img/'+datainit.data[i].src;
+								var oPic = document.createElement('div');
+								oPic.className='pic';
+								oPic.appendChild(oImg);
+								var oBox = document.createElement('div');
+								oBox.className = 'box';
+								oBox.appendChild(oPic);
+								oParent.appendChild(oBox);
+						    }	    	
+	              }
+            };
+	</script>
+</body>
+
+</html>
